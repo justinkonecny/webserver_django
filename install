@@ -1,0 +1,22 @@
+#!/bin/bash
+
+PY_VERSION="3.10.1"
+NGINX_VERSION="1.20.2"
+
+set -e
+
+echo "Stopping containers..."
+docker compose down
+
+if [ "$1" == "-c" ]; then
+  echo "Deleting persistent storage volumes..."
+  echo "Removing $(docker volume rm jk-ws-database)"
+fi
+
+echo "Creating volumes for persistent storage..."
+echo "Created $(docker volume create --name=jk-ws-database)"
+
+docker pull python:${PY_VERSION}
+docker pull nginx:${NGINX_VERSION}
+
+docker-compose build --parallel
