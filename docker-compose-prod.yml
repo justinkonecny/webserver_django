@@ -1,0 +1,33 @@
+version: "3.9"
+services:
+  web:
+    build:
+      context: src
+    working_dir: /ws-dj
+    command: ./bin/run.sh
+    volumes:
+      - ./src:/ws-dj
+    extra_hosts:
+      - dockerhost:172.17.0.1
+  nginx:
+    ports:
+      - "80:80/tcp"
+      - "443:443/tcp"
+    links:
+      - web
+    image: "nginx:1.20.2"
+    volumes:
+      - type: bind
+        read_only: true
+        source: ./nginx/etc/
+        target: /etc/nginx
+      - type: bind
+        read_only: true
+        source: ./nginx/www/
+        target: /var/www/
+      - type: bind
+        read_only: true
+        source: ./nginx/certs
+        target: /etc/ssl/ws-dj/
+    depends_on:
+      - web

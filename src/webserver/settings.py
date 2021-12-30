@@ -10,8 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import os
-import environ
 from pathlib import Path
+
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,7 +29,7 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = (env('DEBUG') == "True")
 
-ALLOWED_HOSTS = ['*'] if DEBUG else []
+ALLOWED_HOSTS = ['*'] if DEBUG else ['api.jkonecny.com']
 
 # Application definition
 
@@ -77,8 +78,6 @@ WSGI_APPLICATION = 'webserver.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASE_OPTIONS = {} if DEBUG else {'sslmode': 'require'}
-
 DATABASES = {
     'default': {
         'ENGINE': env('DB_ENGINE'),
@@ -87,7 +86,6 @@ DATABASES = {
         'PASSWORD': env('DB_PASSWORD'),
         'HOST': env('DB_HOST'),
         'PORT': env('DB_PORT'),
-        'OPTIONS': DATABASE_OPTIONS,
     }
 }
 
@@ -130,3 +128,24 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static_root")
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+APPEND_SLASH = True
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG',
+    },
+}
+
+SPOTIFY_CLIENT_ID = env("SPOTIFY_CLIENT_ID")
+SPOTIFY_CLIENT_SECRET = env("SPOTIFY_CLIENT_SECRET")
+SPOTIFY_CLIENT_CALLBACK = env("SPOTIFY_CLIENT_CALLBACK")
+SPOTIFY_ACCOUNTS_ENDPOINT = env("SPOTIFY_ACCOUNTS_ENDPOINT")
