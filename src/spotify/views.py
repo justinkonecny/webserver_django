@@ -5,11 +5,7 @@ from json import JSONDecodeError
 
 import requests
 from django.conf import settings
-from django.http.request import QueryDict
-from django.http.response import HttpResponse
 from rest_framework import status
-from rest_framework.request import Request
-from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 
 from logger.logger import get_logger
@@ -65,69 +61,3 @@ class SpotifyView(ABC, ViewSet):
         except JSONDecodeError:
             pass
         return err_msg
-
-
-class SpotifyRefreshViewSet(SpotifyView):
-    @classmethod
-    def create(cls, request: Request) -> HttpResponse:
-        LOGGER.debug("Handling refresh token request...")
-
-        data: QueryDict = request.data
-        refresh_token = data.get("refresh_token", None)
-
-        # validate the request
-        if refresh_token is None or type(refresh_token) != str:
-            return Response("missing or invalid form data 'refresh_token'", status.HTTP_400_BAD_REQUEST)
-
-        try:
-            # attempt to make the request to spotify
-            token = cls.request_refresh_token(refresh_token)
-            return Response(token)
-        except ValueError as e:
-            return Response(str(e))
-
-    @classmethod
-    def request_refresh_token(cls, refresh_token: str) -> str:
-        # construct the endpoint
-        form = {
-            "grant_type": "refresh_token",
-            "refresh_token": refresh_token,
-        }
-
-        # make request to spotify
-        return cls._make_authorized_request(form)
-
-
-class SpotifyTokenViewSet(SpotifyView):
-    @classmethod
-    def create(cls, request: Request) -> HttpResponse:
-        LOGGER.debug("Handling auth token request...")
-
-        data: QueryDict = request.data
-        code = data.get("code", None)
-
-        # validate the request
-        if code is None or type(code) != str:
-            return Response("missing or invalid form data 'code'", status.HTTP_400_BAD_REQUEST)
-
-        try:
-            # attempt to make the request to spotify
-            token = cls.request_auth_token(code)
-            return Response(token)
-        except ValueError as e:
-            return Response(str(e))
-
-    @classmethod
-    def request_auth_token(cls, code: str) -> str:
-        # read the configurable settings / secrets
-        redirect_uri = getattr(settings, "SPOTIFY_CLIENT_CALLBACK")
-
-        # construct the request form
-        form = {
-            "grant_type": "authorization_code",
-            "redirect_uri": redirect_uri,
-            "code": code,
-        }
-
-        # make request to spotify
-        return cls._make_authorized_request(form)

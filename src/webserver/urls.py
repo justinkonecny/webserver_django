@@ -17,8 +17,10 @@ from django.contrib import admin
 from django.urls import path, include
 
 from spotify.urls import urlpatterns as spotify_urls
+from users.urls import urlpatterns as users_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('spotify/', include(spotify_urls))
+    path('users/', include(users_urls)),
+    path('spotify/', include(spotify_urls)),
 ]

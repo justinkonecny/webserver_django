@@ -1,9 +1,11 @@
 from rest_framework import routers
 
-from . import views
+from spotify.api.refresh_view_set import RefreshViewSet
+from spotify.api.token_view_set import TokenViewSet
 
 router = routers.SimpleRouter()
-router.register('token', views.SpotifyTokenViewSet, basename='spotify')
-router.register('refresh_token', views.SpotifyRefreshViewSet, basename='spotify')
+
+router.register('token', TokenViewSet, basename='spotify')
+router.register('refresh', RefreshViewSet, basename='spotify')
 
 urlpatterns = router.urls
