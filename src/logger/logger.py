@@ -9,7 +9,7 @@ logging.basicConfig(
 
 
 # The default logging level to apply to the logger
-def get_logger(name: str, level: Union[str, int] = logging.ERROR) -> logging.Logger:
+def get_logger(name: str, level: Union[str, int] = logging.DEBUG) -> logging.Logger:
     """
     Instantiates a logger with the given name and sets the level to the
     level param.

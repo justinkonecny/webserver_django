@@ -1,3 +1,3 @@
 #!/bin/bash
 
-rsync -av --exclude-from='.rsyncignore' . aws:./webserver_django
+rsync -av --delete --exclude-from='.rsyncignore' . aws:./webserver_django

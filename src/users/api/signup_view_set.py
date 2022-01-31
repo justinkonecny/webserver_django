@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
@@ -11,6 +12,8 @@ LOGGER = get_logger(__name__)
 
 
 class SignupViewSet(ViewSet):
+    permission_classes = [AllowAny]
+
     @classmethod
     def create(cls, request: Request) -> Response:
         LOGGER.debug("Handling signup request...")
@@ -20,10 +23,10 @@ class SignupViewSet(ViewSet):
         serializer.is_valid(raise_exception=True)
 
         # retrieve the request fields
-        email = serializer.data.get("email")
-        username = serializer.data.get("username")
-        first_name = serializer.data.get("first_name")
-        last_name = serializer.data.get("last_name")
+        email = serializer.data.get("email").strip()
+        username = serializer.data.get("username").strip()
+        first_name = serializer.data.get("first_name").strip()
+        last_name = serializer.data.get("last_name").strip()
         password = serializer.data.get("password")
 
         # create the user

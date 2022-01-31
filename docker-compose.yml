@@ -1,24 +1,14 @@
 version: "3.9"
 services:
-  database:
-    image: "postgres:14.1"
-    environment:
-      POSTGRES_DB: ws-dj-backend
-      POSTGRES_USER: ws-dj-admin
-      POSTGRES_PASSWORD: ws-dj-admin!
-    ports:
-      - "5432:5432"
-    volumes:
-      - "jk-ws-database:/var/lib/postgresql/data"
   web:
     build:
       context: src
     working_dir: /ws-dj
     command: ./bin/run.sh
-    depends_on:
-      - database
     volumes:
       - ./src:/ws-dj
+    extra_hosts:
+      - dockerhost:172.17.0.1
   nginx:
     ports:
       - "80:80/tcp"
@@ -41,6 +31,3 @@ services:
         target: /etc/ssl/ws-dj/
     depends_on:
       - web
-volumes:
-  jk-ws-database:
-    external: true

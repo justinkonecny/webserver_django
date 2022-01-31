@@ -27,7 +27,7 @@ class TokenViewSet(SpotifyView):
             return Response(str(e))
 
     @classmethod
-    def request_auth_token(cls, code: str) -> str:
+    def request_auth_token(cls, code: str) -> dict[str, str]:
         # read the configurable settings / secrets
         redirect_uri = getattr(settings, "SPOTIFY_CLIENT_CALLBACK")
 

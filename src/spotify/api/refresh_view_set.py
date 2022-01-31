@@ -26,7 +26,7 @@ class RefreshViewSet(SpotifyView):
             return Response(str(e))
 
     @classmethod
-    def request_refresh_token(cls, refresh_token: str) -> str:
+    def request_refresh_token(cls, refresh_token: str) -> dict[str, str]:
         # construct the endpoint
         form = {
             "grant_type": "refresh_token",

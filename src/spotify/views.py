@@ -27,7 +27,7 @@ class SpotifyView(ABC, ViewSet):
         return {"Authorization": f"Basic {auth_header}"}
 
     @classmethod
-    def _make_authorized_request(cls, form: dict) -> str:
+    def _make_authorized_request(cls, form: dict) -> dict[str, str]:
         LOGGER.debug("Making authorized request to Spotify...")
 
         spotify_endpoint = getattr(settings, "SPOTIFY_ACCOUNTS_ENDPOINT")
@@ -47,7 +47,7 @@ class SpotifyView(ABC, ViewSet):
             err_msg = cls._get_error_message(content, status_code)
             raise ValueError(err_msg)
 
-        return content
+        return json.loads(content)
 
     @classmethod
     def _get_error_message(cls, content: str, status_code: int) -> str:
