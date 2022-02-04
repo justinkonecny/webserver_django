@@ -1,3 +1,4 @@
+from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
 
@@ -23,7 +24,7 @@ class RefreshViewSet(SpotifyView):
             token = cls.request_refresh_token(refresh_token)
             return Response(token)
         except ValueError as e:
-            return Response(str(e))
+            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
     @classmethod
     def request_refresh_token(cls, refresh_token: str) -> dict[str, str]:

@@ -1,4 +1,5 @@
 from django.conf import settings
+from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
 
@@ -24,7 +25,7 @@ class TokenViewSet(SpotifyView):
             token = cls.request_auth_token(code)
             return Response(token)
         except ValueError as e:
-            return Response(str(e))
+            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
     @classmethod
     def request_auth_token(cls, code: str) -> dict[str, str]:

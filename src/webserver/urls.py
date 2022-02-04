@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from recommendations.urls import urlpatterns as recommendation_urls
 from spotify.urls import urlpatterns as spotify_urls
 from users.urls import urlpatterns as users_urls
 
@@ -23,4 +24,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/', include(users_urls)),
     path('spotify/', include(spotify_urls)),
+    path('recommendations/', include(recommendation_urls)),
 ]

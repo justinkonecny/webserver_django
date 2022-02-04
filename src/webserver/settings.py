@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'base',
     'users',
+    'spotify',
+    'recommendations',
 ]
 
 MIDDLEWARE = [
