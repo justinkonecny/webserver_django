@@ -5,8 +5,8 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 
 from logger.logger import get_logger
-from users.serializers.signup_serializer import SignupRequestSerializer
-from users.serializers.user_serializer import UserResponseSerializer
+from users.serializers.signup import SignupRequestSerializer
+from users.serializers.user import UserResponseSerializer
 
 LOGGER = get_logger(__name__)
 
@@ -24,7 +24,7 @@ class SignupViewSet(ViewSet):
 
         # retrieve the request fields
         email = serializer.data.get("email").strip()
-        username = serializer.data.get("username").strip()
+        username = serializer.data.get("username").strip().lower()
         first_name = serializer.data.get("first_name").strip()
         last_name = serializer.data.get("last_name").strip()
         password = serializer.data.get("password")

@@ -9,5 +9,6 @@ class TrackRecommendationToSerializer(serializers.Serializer):
 
 class TrackRecommendationFromSerializer(serializers.Serializer):
     # don't define the `create(...)` or `update(...)` methods
+    created_at = serializers.DateTimeField(required=True)
     from_username = serializers.CharField(required=True)
     spotify_track_id = serializers.CharField(required=True, min_length=6)

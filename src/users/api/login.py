@@ -7,8 +7,8 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 
 from logger.logger import get_logger
-from users.serializers.login_serializer import LoginRequestSerializer
-from users.serializers.user_serializer import UserResponseSerializer
+from users.serializers.login import LoginRequestSerializer
+from users.serializers.user import UserResponseSerializer
 
 LOGGER = get_logger(__name__)
 
@@ -26,7 +26,7 @@ class LoginViewSet(ViewSet):
         serializer.is_valid(raise_exception=True)
 
         # retrieve the request fields
-        username = serializer.data.get("username").strip()
+        username = serializer.data.get("username").strip().lower()
         password = serializer.data.get("password")
 
         # authenticate the user

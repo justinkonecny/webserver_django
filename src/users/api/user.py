@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 
 from logger.logger import get_logger
-from users.serializers.user_serializer import UserResponseSerializer
+from users.serializers.user import UserResponseSerializer
 
 LOGGER = get_logger(__name__)
 

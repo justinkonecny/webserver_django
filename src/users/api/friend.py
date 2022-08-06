@@ -7,7 +7,7 @@ from rest_framework.viewsets import ViewSet
 
 from logger.logger import get_logger
 from users.models import UserFriend
-from users.serializers.friend_serializer import FriendRequestSerializer, FriendResponseSerializer
+from users.serializers.friend import FriendRequestSerializer, FriendResponseSerializer
 
 LOGGER = get_logger(__name__)
 

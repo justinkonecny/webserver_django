@@ -7,7 +7,7 @@ from rest_framework.viewsets import ViewSet
 
 from logger.logger import get_logger
 from recommendations.models import TrackRecommendation
-from recommendations.serializers.track_recommendation_serializer import TrackRecommendationToSerializer, TrackRecommendationFromSerializer
+from recommendations.serializers.track import TrackRecommendationToSerializer, TrackRecommendationFromSerializer
 
 LOGGER = get_logger(__name__)
 
@@ -45,12 +45,19 @@ class TrackRecommendationViewSet(ViewSet):
         curr_user = request.user
         tracks = [
             {
+                "created_at": track_rec.created_at,
                 "from_username": track_rec.user_from.username,
                 "spotify_track_id": track_rec.spotify_track_id,
             }
-            for track_rec in curr_user.track_recommendation_to.all()
+            for track_rec in curr_user.track_recommendation_to.all().order_by("created_at")
         ]
 
         # serialize the response
         response = TrackRecommendationFromSerializer(tracks, many=True)
         return Response(response.data)
+
+    @classmethod
+    def update(cls, request: Request) -> Response:
+        LOGGER.debug("Updating track recommendation...")
+
+        return Response(status=status.HTTP_200_OK)
