@@ -7,7 +7,8 @@ from rest_framework.viewsets import ViewSet
 
 from logger.logger import get_logger
 from recommendations.models import TrackRecommendation
-from recommendations.serializers.track import TrackRecommendationSerializer, UpdateRequestSerializer
+from recommendations.serializers.track import TrackRecommendationSerializer, UpdateRequestSerializer, \
+    NewTrackRecommendationSerializer
 from recommendations.utils import get_tracks_from_query
 
 LOGGER = get_logger(__name__)
@@ -19,7 +20,7 @@ class TrackRecommendationViewSet(ViewSet):
         LOGGER.debug("Creating track recommendation...")
 
         # validate the request
-        serializer = TrackRecommendationSerializer(data=request.data)
+        serializer = NewTrackRecommendationSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         curr_user = request.user
