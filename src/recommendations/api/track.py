@@ -4,11 +4,11 @@ from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
-from django.core import serializers
 
 from logger.logger import get_logger
 from recommendations.models import TrackRecommendation
-from recommendations.serializers.track import TrackRecommendationToSerializer, TrackRecommendationFromSerializer, UpdateRequestSerializer
+from recommendations.serializers.track import TrackRecommendationSerializer, UpdateRequestSerializer
+from recommendations.utils import get_tracks_from_query
 
 LOGGER = get_logger(__name__)
 
@@ -19,7 +19,7 @@ class TrackRecommendationViewSet(ViewSet):
         LOGGER.debug("Creating track recommendation...")
 
         # validate the request
-        serializer = TrackRecommendationToSerializer(data=request.data)
+        serializer = TrackRecommendationSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         curr_user = request.user
@@ -31,6 +31,20 @@ class TrackRecommendationViewSet(ViewSet):
         except ObjectDoesNotExist:
             return Response("user does not exist", status=status.HTTP_400_BAD_REQUEST)
 
+        try:
+            # check if this is a duplicate request
+            latest_rec = curr_user \
+                .track_recommendation_from \
+                .filter(user_to=target_user) \
+                .latest('created_at')
+
+            if latest_rec.spotify_track_id == spotify_track_id:
+                LOGGER.debug("Ignoring duplicate track recommendation...")
+                return Response(status=status.HTTP_201_CREATED)
+        except ObjectDoesNotExist:
+            pass
+
+        # create the recommendation
         TrackRecommendation.objects.create(
             user_from=curr_user,
             user_to=target_user,
@@ -44,17 +58,16 @@ class TrackRecommendationViewSet(ViewSet):
         LOGGER.debug("Getting track recommendation...")
 
         curr_user = request.user
-        tracks = [
-            {
-                "created_at": track_rec.created_at,
-                "from_username": track_rec.user_from.username,
-                "spotify_track_id": track_rec.spotify_track_id,
-            }
-            for track_rec in curr_user.track_recommendation_to.filter(has_listened=False).order_by("created_at").all()
-        ]
+        results = curr_user\
+            .track_recommendation_to\
+            .filter(has_listened=False)\
+            .order_by("created_at")\
+            .all()
+
+        unique_tracks = get_tracks_from_query(results)
 
         # serialize the response
-        response = TrackRecommendationFromSerializer(tracks, many=True)
+        response = TrackRecommendationSerializer(unique_tracks, many=True)
         return Response(response.data)
 
     @classmethod
