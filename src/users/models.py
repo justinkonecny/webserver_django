@@ -7,10 +7,13 @@ from base.models import BaseModel
 
 def get_user_friends(self):
     # query for all friends of this user
-    return User.objects.filter(
-        Q(friend_to__user_from=self) |
+    from_me = User.objects.filter(
+        Q(friend_to__user_from=self)
+    )
+    to_me = User.objects.filter(
         Q(friend_from__user_to=self)
     )
+    return from_me.union(to_me).all()
 
 
 User.add_to_class("get_friends", get_user_friends)
