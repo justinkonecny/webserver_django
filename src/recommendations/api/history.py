@@ -25,7 +25,7 @@ class HistoryRecommendationViewSet(ViewSet):
             .order_by("-created_at") \
             .all()
 
-        unique_tracks = get_tracks_from_query(results)
+        unique_tracks = get_tracks_from_query(results, filter_dupes=False)
 
         # serialize the response
         response = TrackRecommendationSerializer(unique_tracks, many=True)
@@ -42,7 +42,7 @@ class HistoryRecommendationViewSet(ViewSet):
             .order_by("-created_at") \
             .all()
 
-        unique_tracks = get_tracks_from_query(results)
+        unique_tracks = get_tracks_from_query(results, filter_dupes=False)
 
         # serialize the response
         response = TrackRecommendationSerializer(unique_tracks, many=True)
