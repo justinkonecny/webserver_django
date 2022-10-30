@@ -27,7 +27,7 @@ services:
         target: /var/www/
       - type: bind
         read_only: true
-        source: ./nginx/certs
-        target: /etc/ssl/ws-dj/
+        source: /etc/letsencrypt/
+        target: /etc/letsencrypt/
     depends_on:
       - web
