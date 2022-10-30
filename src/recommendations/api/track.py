@@ -1,6 +1,9 @@
+from typing import Optional
+
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
@@ -8,7 +11,7 @@ from rest_framework.viewsets import ViewSet
 from logger.logger import get_logger
 from recommendations.models import TrackRecommendation
 from recommendations.serializers.track import TrackRecommendationSerializer, UpdateRequestSerializer, \
-    NewTrackRecommendationSerializer
+    NewTrackRecommendationSerializer, UpdateRatingRequestSerializer
 from recommendations.utils import get_tracks_from_query
 
 LOGGER = get_logger(__name__)
@@ -103,6 +106,43 @@ class TrackRecommendationViewSet(ViewSet):
 
         # mark the track as listened
         track.has_listened = True
+        track.save()
+
+        return Response(status=status.HTTP_200_OK)
+
+    @classmethod
+    @action(methods=['put'], url_path='rating', detail=False)
+    def set_recommendation_rating(cls, request: Request) -> Response:
+        LOGGER.debug("Updating track recommendation rating...")
+
+        # validate the request
+        serializer = UpdateRatingRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        curr_user = request.user
+        from_username = serializer.data.get("from_username")
+        spotify_track_id = serializer.data.get("spotify_track_id")
+        rating = serializer.data.get("rating")
+
+        try:
+            # try to find the user with the given username
+            from_user = User.objects.get(username=from_username)
+        except ObjectDoesNotExist:
+            LOGGER.debug("User not found")
+            return Response("user does not exist", status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # try to find the track recommendation
+            track = curr_user.track_recommendation_to.filter(
+                user_from=from_user,
+                spotify_track_id=spotify_track_id,
+                has_listened=True
+            ).earliest("created_at")
+        except ObjectDoesNotExist:
+            LOGGER.debug(f"Recommendation not found: user_from={from_user}, uri={spotify_track_id}")
+            return Response("recommendation does not exist", status=status.HTTP_400_BAD_REQUEST)
+
+        track.rating = rating
         track.save()
 
         return Response(status=status.HTTP_200_OK)

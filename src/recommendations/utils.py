@@ -8,6 +8,7 @@ def get_tracks_from_query(query_results, limit=50) -> list[t_track]:
         "to_username": track_rec.user_to.username,
         "spotify_track_id": track_rec.spotify_track_id,
         "has_listened": track_rec.has_listened,
+        "rating": track_rec.rating
     } for track_rec in query_results[:limit]]
     return filter_duplicates(tracks)
 
