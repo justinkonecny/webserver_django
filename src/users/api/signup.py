@@ -22,21 +22,8 @@ class SignupViewSet(ViewSet):
         serializer = SignupRequestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        # retrieve the request fields
-        email = serializer.data.get("email").strip()
-        username = serializer.data.get("username").strip().lower()
-        first_name = serializer.data.get("first_name").strip()
-        last_name = serializer.data.get("last_name").strip()
-        password = serializer.data.get("password")
-
         # create the user
-        user = User.objects.create_user(
-            username=username,
-            email=email,
-            password=password,
-            first_name=first_name,
-            last_name=last_name,
-        )
+        user = serializer.save()
 
         # serialize the response
         response = UserResponseSerializer(user)
