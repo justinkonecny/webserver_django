@@ -1,3 +1,5 @@
+import json
+
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.request import Request
@@ -14,5 +16,7 @@ class LoggerViewSet(ViewSet):
     @action(methods=['post'], url_path='log', detail=False)
     def create_log(cls, request: Request) -> Response:
         if request.user.is_staff:
-            LOGGER.info(f"[CLIENT: '{request.user.username}']: {str(request.data)}")
+            class_name = request.data['class']
+            message = request.data['message']
+            LOGGER.info(f"[CLIENT:'{request.user.username}'][{class_name}]: {message}")
         return Response(status=status.HTTP_200_OK)

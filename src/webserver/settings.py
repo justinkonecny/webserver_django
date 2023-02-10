@@ -133,18 +133,26 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 APPEND_SLASH = True
 
+print(f"LOG_LEVEL_CONSOLE={env('LOG_LEVEL_CONSOLE')}")
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'simple': {
+            'format': '[%(levelname)s][%(name)s][%(filename)s@%(lineno)s]: %(message)s'
+        },
+    },
     'handlers': {
         'console': {
-            'level': 'DEBUG',
             'class': 'logging.StreamHandler',
+            'formatter': 'simple',
         },
+
     },
     'root': {
         'handlers': ['console'],
-        'level': 'DEBUG',
+        'level': env('LOG_LEVEL_CONSOLE'),  # send this level and higher to console
     },
 }
 
