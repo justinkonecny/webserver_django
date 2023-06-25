@@ -62,10 +62,10 @@ class TrackRecommendationViewSet(ViewSet):
         LOGGER.debug("Getting track recommendation...")
 
         curr_user = request.user
-        results = curr_user\
-            .track_recommendation_to\
-            .filter(has_listened=False)\
-            .order_by("created_at")\
+        results = curr_user \
+            .track_recommendation_to \
+            .filter(has_listened=False) \
+            .order_by("created_at") \
             .all()
 
         unique_tracks = get_tracks_from_query(results)

@@ -16,7 +16,14 @@ def get_user_friends(self):
     return from_me.union(to_me).all()
 
 
+def get_active_group(self, **kwargs):
+    member_of = self.groups_member_of.filter(is_active=True, **kwargs)
+    created = self.created_groups.filter(is_active=True, **kwargs)
+    return member_of.union(created).get()
+
+
 User.add_to_class("get_friends", get_user_friends)
+User.add_to_class("get_active_group", get_active_group)
 
 
 class UserFriend(BaseModel):

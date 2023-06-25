@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'users',
     'spotify',
     'recommendations',
+    'groups',
 ]
 
 MIDDLEWARE = [

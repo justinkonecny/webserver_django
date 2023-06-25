@@ -13,3 +13,4 @@ sqlparse==0.4.2
 urllib3==1.26.7
 uWSGI==2.0.20
 coreapi==2.3.3
+uuid==1.30
