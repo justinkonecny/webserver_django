@@ -44,6 +44,11 @@ class SetListenedGroupTrackRequestSerializer(serializers.Serializer):
     spotify_track_id = serializers.CharField(required=True, max_length=128)
 
 
+class DeactivateGroupRequest(serializers.Serializer):
+    # don't define the `create(...)` or `update(...)` methods
+    group_join_key = serializers.CharField(required=True)
+
+
 class GroupResponseSerializer(serializers.Serializer):
     # don't define the `create(...)` or `update(...)` methods
     join_key = serializers.CharField(required=True)

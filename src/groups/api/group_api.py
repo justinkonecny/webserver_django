@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 
 from groups.api.group_serializer import CreateGroupRequest, GroupResponseSerializer, JoinGroupRequest, \
-    QueueGroupTrackRequestSerializer, SetListenedGroupTrackRequestSerializer
+    QueueGroupTrackRequestSerializer, SetListenedGroupTrackRequestSerializer, DeactivateGroupRequest
 from groups.models import GroupMembership, Group, GroupTrack
 from logger.logger import get_logger
 
@@ -227,3 +227,33 @@ class GroupViewSet(ViewSet):
         data = get_group_data([group])[0]
         response = GroupResponseSerializer(data)
         return Response(response.data)
+
+    @classmethod
+    @action(methods=['post'], url_path='listened', detail=False)
+    def deactivate_group(cls, request: Request) -> Response:
+        LOGGER.debug("Deactivating group...")
+
+        # validate the request
+        serializer = DeactivateGroupRequest(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        group_join_key = serializer.data.get("group_join_key")
+
+        try:
+            # try to find the given group
+            group = request.user \
+                .get_active_group(join_key=group_join_key)
+        except ObjectDoesNotExist:
+            LOGGER.debug("Group not found")
+            return Response("no group found", status=status.HTTP_400_BAD_REQUEST)
+
+        # only the creator can deactivate a group
+        if group.creator != request.user:
+            LOGGER.debug("User not group creator")
+            return Response("insufficient permissions", status=status.HTTP_403_FORBIDDEN)
+
+        # set the group as not active
+        group.is_active = False
+        group.save()
+
+        return Response(status=status.HTTP_200_OK)
