@@ -22,8 +22,15 @@ def get_active_group(self, **kwargs):
     return member_of.union(created).get()
 
 
+def get_active_groups(self, **kwargs):
+    member_of = self.groups_member_of.filter(is_active=True, **kwargs)
+    created = self.created_groups.filter(is_active=True, **kwargs)
+    return member_of.union(created).all()
+
+
 User.add_to_class("get_friends", get_user_friends)
 User.add_to_class("get_active_group", get_active_group)
+User.add_to_class("get_active_groups", get_active_groups)
 
 
 class UserFriend(BaseModel):

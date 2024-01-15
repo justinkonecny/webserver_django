@@ -4,3 +4,4 @@ __pycache__/
 
 nginx/certs
 src/.env
+webserver_django.code-workspace

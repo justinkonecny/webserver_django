@@ -1,6 +1,6 @@
 from rest_framework import routers
 
-from groups.api.group_api import GroupViewSet
+from groups.api import GroupViewSet
 
 router = routers.SimpleRouter()
 
